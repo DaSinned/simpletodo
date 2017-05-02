@@ -17,3 +17,6 @@ Simple command line script to store tasks in a database
 - heute
 - morgen
 - nächste woche
+
+## requirements
+- python-dateutil
