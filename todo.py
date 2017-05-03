@@ -18,18 +18,22 @@ class Todo(object):
         """prints out formatted entries"""
         todo_list = self.get_list()
 
-        max_indent = len(str(todo_list[-1][0]))
+        if todo_list:
 
-        for item in todo_list:
+            max_indent = len(str(todo_list[-1][0]))
 
-            indent = 0
-            if len(str(item[0])) < max_indent:
-                indent = max_indent - len(str(item[0]))
+            for item in todo_list:
 
-            if item[2] == "0000-00-00 00:00:00":
-                print("#{}{}: {}".format(" " * indent, item[0], item[1]))
-            else:
-                print("#{}{}: {} @ {}".format(" " * indent, item[0], item[1], item[2]))
+                indent = 0
+                if len(str(item[0])) < max_indent:
+                    indent = max_indent - len(str(item[0]))
+
+                if item[2] == "0000-00-00 00:00:00":
+                    print("#{}{}: {}".format(" " * indent, item[0], item[1]))
+                else:
+                    print("#{}{}: {} @ {}".format(" " * indent, item[0], item[1], item[2]))
+        else: 
+            print("no tasks found")
 
     def get_list(self):
         """get all database entries
