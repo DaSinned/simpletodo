@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from todo import Todo
-import argparse
 import sys
 
 todo = None
@@ -28,20 +27,23 @@ possible WORDs for 'add' command:
     """
 
     try:
-        _action = sys.argv[1]
+        if len(sys.argv) > 1:
+            _action = sys.argv[1]
 
-        if not sys.argv[1]:
-            print(helptext)
+            if not sys.argv[1]:
+                print(helptext)
 
-        if _action == "list":
-            todo.list()
-        elif _action == "add":
-            todo.add(" ".join(sys.argv[2:]))
-            todo.list()
-        elif _action == "done":
-            todo.done(sys.argv[2])
-            todo.list()
-        else: 
+            if _action == "list":
+                todo.list()
+            elif _action == "add":
+                todo.add(" ".join(sys.argv[2:]))
+                todo.list()
+            elif _action == "done":
+                todo.done(sys.argv[2])
+                todo.list()
+            else:
+                print(helptext)
+        else:
             print(helptext)
 
     except Exception as e:

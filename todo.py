@@ -50,17 +50,19 @@ class Todo(object):
         Args:
             text (str): user input
         """
+        if not text:
+            raise Exception("empty task not allowed")
+
         pattern = re.compile('^(.+) @ (.+)$')
         matches = re.search(pattern, text)
 
         if matches:
-            dict = {'title': matches.group(1), 'remember': self.parse_date(matches.group(2))}
+            add_dict = {'title': matches.group(1), 'remember': self.parse_date(matches.group(2))}
         else:
-            dict = {'title': text}
-        print(dict)
+            add_dict = {'title': text}
 
-        if(dict):
-            self.insert_todo(dict)
+        if(add_dict):
+            self.insert_todo(add_dict)
 
     def insert_todo(self, values):
         """insert todo dict to db
