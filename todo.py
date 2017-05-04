@@ -2,17 +2,21 @@
 from db import DatabaseManager
 import datetime
 import re
-from dateutil.parser import parse
+import parsedatetime
 
 
 class Todo(object):
     _db = None
+    _pdt = None
+
+    LOCALE = "de_DE"
     DATETIME_FORMAT = "%Y-%m-%d %H:%M"
     DATE_FORMAT = "%Y-%m-%d"
     TIME_FORMAT = "%H:%M"
 
     def __init__(self):
         self._db = DatabaseManager()
+        self._pdt = parsedatetime.Calendar(parsedatetime.Constants(self.LOCALE))
 
     def list(self):
         """prints out formatted entries"""
@@ -32,7 +36,7 @@ class Todo(object):
                     print("#{}{}: {}".format(" " * indent, item[0], item[1]))
                 else:
                     print("#{}{}: {} @ {}".format(" " * indent, item[0], item[1], item[2]))
-        else: 
+        else:
             print("no tasks found")
 
     def get_list(self):
@@ -80,64 +84,13 @@ class Todo(object):
         self._db.query(sql, values)
 
     def parse_date(self, inp):
-        """parse datetime from user input
+        time_struct, parse_status = self._pdt.parse(inp)
 
-        Args:
-            inp (str): user input
-
-        Returns:
-            datetime
-        """
-
-        inp = inp.lower()
-
-        # split date input
-        # (heute 19:00)|(nächste woche)|(14.04.2017 18:00)
-        pattern = re.compile('^([A-Za-zäöüß]+) ([0-9:]+)|([A-Za-zäöüß ]+)|([0-9.: ]+)$')
-        match = re.search(pattern, inp)
-
-        if match.group(1) and match.group(2):
-            # word + time
-            print("{} {}".format(self.parse_word(match.group(1), False), match.group(2)))
-            return parse("{} {}".format(self.parse_word(match.group(1), False), match.group(2)), dayfirst=True)
-            pass
-        if match.group(3):
-            # word only
-            return self.parse_word(match.group(3))
-        if match.group(4):
-            # date to parse
-            return parse(match.group(4), dayfirst=True)
-
-    def parse_word(self, word, time=True):
-        """parse a word and try to get the date
-
-        Args:
-            word (str): input word
-            time (bool): whether to show datetime or date
-
-        Returns: 
-            datetime
-        """
-
-        if time:
-            _format = self.DATETIME_FORMAT
+        if(parse_status > 0):
+            date = datetime.datetime(*time_struct[:6])
+            return date.strftime(self.DATETIME_FORMAT)
         else:
-            _format = self.DATE_FORMAT
-
-        # today
-        if word.strip() == "heute":
-            date = datetime.datetime.today()
-            return date.strftime(_format)
-        # tomorrow
-        if word.strip() == "morgen":
-            date = datetime.datetime.today() + datetime.timedelta(days=1)
-            return date.strftime(_format)
-        # next week
-        if word.strip() == "nächste woche":
-            date = datetime.datetime.today() + datetime.timedelta(days=7)
-            return date.strftime(_format)
-
-        raise ValueError("date word not recognized")
+            raise ValueError("date could not be parsed")
 
     def done(self, id):
         """removes entry with given id from db

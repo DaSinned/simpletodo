@@ -4,6 +4,7 @@ import sys
 
 todo = None
 
+
 def main():
 
     helptext = """SimpleTodo
@@ -11,19 +12,8 @@ def main():
 possible commands:
     list            - shows entries
     done ID         - remove entry from database
-    add TEXT @ DATE - add a new entry
-
-possible 'add' commands:
-    add TEXT
-    add TEXT @ 31.12.2018
-    add TEXT @ 31.12.2018 15:01
-    add TEXT @ WORD 
-    add TEXT @ WORD 15:01
-
-possible WORDs for 'add' command:
-    heute
-    morgen
-    nächste woche
+    add TEXT @ DATE - add a new entry, '@ DATE' is optional
+                      see parsedatetime documentation for date commands
     """
 
     try:
@@ -52,5 +42,5 @@ possible WORDs for 'add' command:
 
 
 if __name__ == '__main__':
-    todo = Todo();
+    todo = Todo()
     main()
